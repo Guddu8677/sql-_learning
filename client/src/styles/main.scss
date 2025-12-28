@@ -347,19 +347,23 @@ body::before {
 // ===== MAIN CONTENT =====
 .main-content {
   flex: 1;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: $space-12 $space-8 $space-16;
+  max-width: none; // Remove max-width restriction
+  margin: 0;
+  padding: $space-8;
   width: 100%;
-  min-height: calc(100vh - 160px); // Ensure minimum height accounting for header and footer
+  height: calc(100vh - 80px); // Fixed height, no scrolling
+  overflow: hidden; // Prevent scrolling
   
-  // Special layout for assignment pages
+  // Special layout for assignment pages - full screen without footer
   &--assignment {
-    padding: $space-8 $space-8 $space-8;
-    min-height: calc(100vh - 140px);
+    padding: $space-6;
+    height: calc(100vh - 80px); // Full height minus header only
+    max-width: none;
+    margin: 0;
+    overflow: hidden; // Prevent scrolling
     
     @include respond(lg) {
-      padding: $space-12 $space-8 $space-12;
+      padding: $space-8;
     }
   }
 }
@@ -678,53 +682,61 @@ body::before {
 
 // ===== ASSIGNMENT ATTEMPT LAYOUT =====
 .assignment-attempt {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: $space-6;
   animation: slideIn 0.8s ease-out;
-  min-height: 600px;
-  
-  @include respond(md) {
-    grid-template-columns: 1fr;
-    gap: $space-8;
-  }
+  height: calc(100vh - 160px); // Fixed height, no scrolling
+  width: 100%;
+  overflow: hidden; // Prevent page scrolling
   
   @include respond(lg) {
-    grid-template-columns: 1fr 1.5fr;
-    gap: $space-10;
-    min-height: 700px;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: $space-8;
+    height: calc(100vh - 160px);
   }
   
   @include respond(xl) {
-    grid-template-columns: 1fr 1.6fr;
-    gap: $space-12;
+    grid-template-columns: 450px 1fr;
+    gap: $space-10;
   }
 }
 
-.left-panel,
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  height: 100%; // Take full available height
+  overflow: hidden; // Remove scrolling
+  
+  @include respond(lg) {
+    // Remove max-height and overflow restrictions
+  }
+}
+
 .right-panel {
   display: flex;
   flex-direction: column;
   gap: $space-6;
+  flex: 1;
+  min-width: 0; // Allow shrinking
+  height: 100%; // Take full available height
+  overflow: hidden; // Remove scrolling
   
-  // Remove height restrictions for better content flow
   @include respond(lg) {
-    max-height: calc(100vh - 250px);
-    overflow-y: auto;
-  }
-}
-
-// Enhanced responsive panel sizing
-.left-panel {
-  @include respond(lg) {
-    min-width: 350px;
-    max-width: 450px;
-  }
-}
-
-.right-panel {
-  @include respond(lg) {
-    min-width: 500px;
+    // Make editor bigger - 60% for editor, 40% for results
+    .sql-editor-panel {
+      flex: 1.5; // Bigger flex value for more space
+      height: calc(60% - #{$space-3}); // 60% of available height
+      min-height: 0; // Allow shrinking
+    }
+    
+    .results-panel {
+      flex: 1; // Smaller flex value
+      height: calc(40% - #{$space-3}); // 40% of available height
+      min-height: 0; // Allow shrinking
+    }
   }
 }
 
@@ -755,44 +767,97 @@ body::before {
 .question-panel {
   flex: 0 0 auto; // Don't grow, maintain content size
   
+  .question-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: $space-4; // Reduced margin
+    gap: $space-4;
+    flex-wrap: wrap;
+    
+    @include respond(sm) {
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+  }
+  
   .question-title {
     font-family: $font-heading;
-    font-size: clamp($text-xl, 4vw, $text-3xl);
+    font-size: clamp($text-lg, 3vw, $text-2xl); // Smaller title
     font-weight: 800;
     color: $gray-800;
-    margin-bottom: $space-6;
+    margin: 0;
     background: linear-gradient(135deg, $gray-800 0%, $primary 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1.2;
+    flex: 1;
   }
 
   .question-content {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    padding: $space-6;
+    padding: $space-4; // Reduced padding
     border-radius: $rounded-2xl;
     border-left: 4px solid $primary;
-    font-size: clamp($text-sm, 2.5vw, $text-lg);
-    line-height: 1.6;
+    font-size: clamp($text-sm, 2vw, $text-base); // Smaller text
+    line-height: 1.5; // Tighter line height
     color: $gray-700;
     backdrop-filter: blur(10px);
-    
-    @include respond(md) {
-      padding: $space-8;
-      line-height: 1.7;
-    }
   }
 }
 
 // Enhanced sample data panel
 .sample-data-panel {
-  flex: 1 1 auto; // Allow growth and shrinking
-  min-height: 300px;
+  flex: 1;
+  height: 100%; // Take available height
+  overflow: hidden; // Remove scrolling
+  display: flex;
+  flex-direction: column;
   
-  @include respond(lg) {
-    max-height: 500px;
-    overflow-y: auto;
+  .table-content {
+    margin-top: $space-4;
+    flex: 1;
+    overflow: hidden; // Remove scrolling
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .schema-section {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4; // Reduced gap to fit better
+    flex: 1;
+    overflow: hidden;
+    
+    // Make tables fit within available space
+    .data-table {
+      font-size: $text-xs; // Smaller text to fit more content
+      
+      th, td {
+        padding: $space-2; // Reduced padding
+      }
+    }
+  }
+  
+  .schema-title {
+    font-family: $font-heading;
+    font-size: $text-base; // Smaller title
+    font-weight: 700;
+    color: $gray-800;
+    margin: 0 0 $space-2 0; // Reduced margin
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    
+    &::before {
+      content: '';
+      width: 14px; // Smaller icon
+      height: 14px;
+      background: $gradient-primary;
+      border-radius: $rounded;
+      box-shadow: $shadow;
+    }
   }
 }
 
@@ -831,11 +896,31 @@ body::before {
   padding: $space-2;
   border-radius: $rounded-xl;
   backdrop-filter: blur(10px);
-  overflow-x: auto; // Allow horizontal scrolling on mobile
+  overflow-x: auto;
+  flex-wrap: nowrap; // Prevent wrapping
   
   @include respond(md) {
     margin-bottom: $space-6;
-    overflow-x: visible;
+    flex-wrap: wrap; // Allow wrapping on larger screens
+  }
+  
+  // Custom scrollbar for horizontal scroll
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.5);
+    border-radius: 2px;
+    
+    &:hover {
+      background: rgba(148, 163, 184, 0.7);
+    }
   }
 }
 
@@ -965,21 +1050,9 @@ body::before {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 350px;
-  
-  @include respond(sm) {
-    min-height: 400px;
-  }
-  
-  @include respond(md) {
-    min-height: 450px;
-  }
-  
-  @include respond(lg) {
-    min-height: 500px;
-    max-height: 600px;
-  }
+  flex: 1;
+  height: 100%; // Take full allocated height
+  min-height: 0; // Allow shrinking
 }
 
 .sql-editor-header {
@@ -1225,21 +1298,9 @@ body::before {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 250px;
-  
-  @include respond(sm) {
-    min-height: 300px;
-  }
-  
-  @include respond(md) {
-    min-height: 350px;
-  }
-  
-  @include respond(lg) {
-    min-height: 400px;
-    max-height: 500px;
-  }
+  flex: 1;
+  height: 100%; // Take full allocated height
+  min-height: 0; // Allow shrinking
 }
 
 .results-header {
@@ -1445,6 +1506,15 @@ body::before {
 
 .modal-body {
   padding: $space-8;
+}
+
+.modal-footer {
+  padding: $space-6 $space-8;
+  background: rgba(248, 250, 252, 0.8);
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-4;
 }
 
 .hint-content {
@@ -1897,11 +1967,12 @@ body::before {
 // ===== RESPONSIVE DESIGN =====
 @media (max-width: $md) {
   .main-content {
-    padding: $space-8 $space-4 $space-12;
+    padding: $space-4;
     
     &--assignment {
-      padding: $space-6 $space-4 $space-8;
-      min-height: calc(100vh - 120px);
+      padding: $space-4;
+      height: calc(100vh - 80px); // Fixed height, no scrolling
+      overflow: hidden;
     }
   }
   
@@ -1912,51 +1983,57 @@ body::before {
   // Assignment attempt mobile improvements
   .assignment-attempt {
     gap: $space-4;
-    min-height: auto;
+    height: calc(100vh - 120px); // Fixed height minus header and padding
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   
   .left-panel,
   .right-panel {
-    max-height: none;
-    overflow-y: visible;
+    overflow: hidden; // Remove scrolling
     gap: $space-4;
+    flex: 1; // Take equal space on mobile
+    min-height: 0; // Allow shrinking
+  }
+  
+  .right-panel {
+    .sql-editor-panel {
+      flex: 1.5; // Bigger on mobile too
+      min-height: 0;
+    }
+    
+    .results-panel {
+      flex: 1; // Smaller results panel
+      min-height: 0;
+    }
   }
   
   // Panel mobile optimizations
   .question-panel,
   .sample-data-panel {
-    padding: $space-6;
-  }
-  
-  .sql-editor-panel {
-    min-height: 300px;
-    max-height: 400px;
-  }
-  
-  .results-panel {
-    min-height: 200px;
-    max-height: 300px;
+    padding: $space-4; // Reduced padding for mobile
   }
   
   // Editor mobile styles
   .editor-title-bar {
     flex-direction: column;
-    gap: $space-3;
+    gap: $space-2;
     align-items: flex-start;
-    padding: $space-3 $space-4;
+    padding: $space-2 $space-3;
   }
   
   .editor-toolbar {
     justify-content: flex-start;
     flex-wrap: wrap;
-    padding: $space-3 $space-4;
+    padding: $space-2 $space-3;
   }
   
   .toolbar-btn {
     flex: 1;
     justify-content: center;
-    min-width: 120px;
-    padding: $space-2 $space-4;
+    min-width: 100px;
+    padding: $space-2 $space-3;
     font-size: $text-xs;
   }
   
@@ -1967,12 +2044,12 @@ body::before {
   // Table mobile improvements
   .data-table {
     th, td {
-      padding: $space-2;
-      font-size: $text-xs;
+      padding: $space-1 $space-2;
+      font-size: 10px; // Very small text to fit
     }
     
     th {
-      font-size: 10px;
+      font-size: 9px;
     }
   }
   
@@ -1983,8 +2060,8 @@ body::before {
   }
   
   .table-tab {
-    padding: $space-2 $space-3;
-    font-size: $text-xs;
+    padding: $space-1 $space-2;
+    font-size: 10px;
   }
 }
 

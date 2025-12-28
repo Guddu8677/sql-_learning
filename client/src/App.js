@@ -10,6 +10,7 @@ import './styles/main.scss';
 function AppContent() {
   const location = useLocation();
   const isAssignmentPage = location.pathname.includes('/assignment/');
+  const showFooter = location.pathname === '/' || location.pathname === '/about';
 
   return (
     <div className="app">
@@ -21,7 +22,7 @@ function AppContent() {
           <Route path="/about" element={<AboutPage />} />
         </Routes>
       </main>
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 }
