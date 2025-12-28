@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 CipherSQLStudio - SQL Learning Platform
 
 CipherSQLStudio is a browser-based SQL learning platform designed to help students practice SQL queries. With real-time execution, intelligent hints, and a structured difficulty progression, it provides an interactive and safe learning environment for mastering SQL.
@@ -282,6 +281,3 @@ Context-Aware Hints: Adaptive AI hints based on user progress.
 Error-Specific Help: Hints based on specific query errors.
 
 Fallback Hints: General tips when AI is unavailable.
-=======
-
->>>>>>> d564b1ffe9020f0c6e0efa184bbba2c0e9bfc914
